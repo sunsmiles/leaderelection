@@ -39,3 +39,24 @@ The executable file is in the directory: dist/Debug/GNU-Linux, after enter into 
 ##Examples
 
 
+root@32552712113b:~/le/dist/Debug/GNU-Linux# ./leaderelection 172.17.0.1:2181 bb
+aa0000000000
+bb0000000001
+aa, 0000000000, 0
+bb, 0000000001, 1
+znodeName: bb, smallest node: aa
+I'm follower of aa
+
+
+root@32552712113b:~/le/dist/Debug/GNU-Linux# ./leaderelection 172.17.0.1:2181 aa
+aa0000000000
+aa, 0000000000, 0
+znodeName: aa, smallest node: aa
+I'm the leader now
+node list changing, type:4, state: 3, path: /electionaa0000000000
+bb0000000001
+aa, 0000000000, 0
+bb, 0000000001, 1
+znodeName: aa, smallest node: aa
+I'm the leader now
+
