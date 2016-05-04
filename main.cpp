@@ -38,13 +38,13 @@ string nodename = "";
 
 int main(int argc, char** argv)
 {
-	if (argc != 2) {
-		cout << "Error parameter, useage: ./" << argv[0] << " nodename" << endl;
+	if (argc !=3) {
+		cout << "Error parameter, useage: ./" << argv[0] << " serverip:port nodename" << endl;
 		return -1;
 	}
 	//初始化需要的参数
-	nodename = argv[1];
-	string servs = "172.17.0.2:2181"; //",172.17.0.3:2181,172.17.0.4:2181";
+	nodename = argv[2];
+	string servs =  argv[1];//"172.17.0.2:2181"; //",172.17.0.3:2181,172.17.0.4:2181";
 	int timeout = 300;
 
 	//初始化zookeeper句柄
