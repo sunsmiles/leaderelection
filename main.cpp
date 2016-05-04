@@ -36,8 +36,6 @@ string getSmallestNoNode(vector<string> nodelist);
 bool splitString(vector<string> nodelist, map<string, int>& nodemap);
 string nodename = "";
 
-
-
 int main(int argc, char** argv)
 {
 	if (argc != 2) {
@@ -59,7 +57,7 @@ int main(int argc, char** argv)
 
 	//创建永久节点/election
 	string path = "/election";
-	int ret = zoo_acreate(zkhandle, path.c_str(), "1", 1, 
+	int ret = zoo_acreate(zkhandle, path.c_str(), "1", 1,
 		&ZOO_OPEN_ACL_UNSAFE, 0, zkleader_string_completion, "acreate");
 	if (ret) {
 		cerr << "Error " << ret << " for acreate" << endl;
@@ -68,14 +66,15 @@ int main(int argc, char** argv)
 
 	//创建/election节点的子节点，通过命令行参数argv[1]指定
 	path = "/election/" + nodename;
-	ret = zoo_acreate(zkhandle, path.c_str(), "1", 1, 
-		&ZOO_OPEN_ACL_UNSAFE, ZOO_SEQUENCE | ZOO_EPHEMERAL, 
+	ret = zoo_acreate(zkhandle, path.c_str(), "1", 1,
+		&ZOO_OPEN_ACL_UNSAFE, ZOO_SEQUENCE | ZOO_EPHEMERAL,
 		zkleader_string_completion, "acreate");
 	if (ret) {
 		fprintf(stderr, "Error %d for %s\n", ret, "acreate");
 		exit(EXIT_FAILURE);
 	}
 
+	//输出是否为leader以及设置节点变化的监听函数
 	printIfLeader(zkhandle, get_watcher);
 
 	getchar();
@@ -84,6 +83,9 @@ int main(int argc, char** argv)
 	return 0;
 }
 
+/*
+ *  * 打印自己是否为leader，或者是哪个节点的follower
+ */
 void printIfLeader(zhandle_t* zkhandle, watcher_fn fn)
 {
 	vector<string> children;
@@ -106,12 +108,18 @@ void printIfLeader(zhandle_t* zkhandle, watcher_fn fn)
 	}
 }
 
+/*
+ * 监听节点列表变化的回调函数
+ */
 void get_watcher(zhandle_t* zh, int type, int state, const char* path, void* watcherCtx)
 {
 	cout << "node list changing, type:" << type << ", state: " << state << ", path: " << path;
 	printIfLeader(zh, get_watcher);
 }
 
+/*
+ * 获取path下的子节点列表
+ */
 int wgetChildren(zhandle_t* zkhandle, string path, vector<string>& children, watcher_fn fn)
 {
 	struct String_vector strChildren;
@@ -126,6 +134,9 @@ int wgetChildren(zhandle_t* zkhandle, string path, vector<string>& children, wat
 	return ret;
 }
 
+/*
+ * 从nodelist中给出的节点列表中找到最后10位组成的数字最小的那个元素
+ */
 string getSmallestNoNode(vector<string> nodelist)
 {
 	if (nodelist.empty()) {
@@ -151,6 +162,10 @@ string getSmallestNoNode(vector<string> nodelist)
 	return minName;
 }
 
+/*
+ * nodelist中每个元素都是一个字符串，其组成格式为：nodename0000000001，最后十位为数字
+ * 本函数将nodelist中的每个字符串分解为<nodename, 1>这样的元素对，通过nodemap返回
+ */
 bool splitString(vector<string> nodelist, map<string, int>& nodemap)
 {
 	string prefix, postfix;
